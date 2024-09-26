@@ -1,0 +1,43 @@
+name: Update Godot Casks
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-casks:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Update Godot Casks
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          brew update
+          brew tap fractalcounty/homebrew-godot-dev
+          ruby update_casks.rb
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Update Godot development versions
+          title: Update Godot development versions
+          body: This PR updates the Godot development versions.
+          branch: update-godot-versions
+          delete-branch: true
+
+      - name: Auto-merge PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_URL=$(gh pr list --limit 1 --json url --jq '.[0].url')
+          if [ -n "$PR_URL" ]; then
+            gh pr merge --auto --merge "$PR_URL"
+          fi
