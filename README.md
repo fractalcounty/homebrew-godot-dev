@@ -4,6 +4,9 @@
 [![Latest Godot Dev Version](https://img.shields.io/github/v/tag/godotengine/godot-builds?label=version&include_prereleases&sort=semver)](https://github.com/godotengine/godot-builds/releases)
 [![License](https://img.shields.io/github/license/fractalcounty/homebrew-godot-dev)](LICENSE)
 
+> [!NOTE]
+> This is an unofficial homebrew tap created for my own convienence and isn't associated with the Godot development team
+
 This is a [Homebrew](https://brew.sh/) tap that allows you to install the latest development preview builds of the [Godot Engine](https://godotengine.org/) on macOS using [Homebrew Cask](https://github.com/Homebrew/homebrew-cask). This tap provides access to development previews (e.g., `4.4-dev2`, `4.3-rc2`) that are not available in the official Homebrew cask, which only covers stable releases (e.g., `4.3`).
 
 The cask is automatically updated using a GitHub Actions workflow to always point to the latest development build available from the [Godot Engine's official builds](https://github.com/godotengine/godot-builds/releases).
