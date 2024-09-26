@@ -5,12 +5,12 @@
   </picture>
 </div>
 
-# Godot development previews for Homebrew
+# Godot development snapshots for Homebrew
 [![Update Godot Casks](https://github.com/fractalcounty/homebrew-godot-dev/actions/workflows/update-cask.yml/badge.svg)](https://github.com/fractalcounty/homebrew-godot-dev/actions/workflows/update-cask.yml)
 [![Latest Godot Dev Version](https://img.shields.io/github/v/tag/godotengine/godot-builds?label=version&include_prereleases&sort=semver)](https://github.com/godotengine/godot-builds/releases)
 [![License](https://img.shields.io/github/license/fractalcounty/homebrew-godot-dev)](LICENSE)
 
-This is a [Homebrew](https://brew.sh/) tap I made so that I could install the latest development preview builds of the [Godot Engine](https://godotengine.org/) on macOS using the [Homebrew](https://github.com/Homebrew/homebrew-cask) package manager. It provides dev previews (e.g., `4.4-dev2`, `4.3-rc2`) that are not available in the official Homebrew cask, which only seems to cover stable releases (e.g., `4.3`, `4.2`).
+This is a Homebrew tap I made so that I could install the latest development preview builds of the [Godot Engine](https://godotengine.org/) on macOS using the Homebrew package manager. It provides the five most recent dev previews (e.g., `4.4-dev2`, `4.3-rc2`), as opposed to the [official Homebrew cask](https://formulae.brew.sh/cask/godot) which only covers the most recent stable release.
 
 The cask is automatically updated using a GitHub Actions workflow to always point to the latest development build available from the [Godot Engine's official builds](https://github.com/godotengine/godot-builds/releases).
 
