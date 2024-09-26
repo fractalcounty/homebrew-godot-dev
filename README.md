@@ -1,6 +1,6 @@
 # Godot Development Builds for Homebrew
 
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/fractalcounty/homebrew-godot-dev/update_cask.yml?branch=main)](https://github.com/fractalcounty/homebrew-godot-dev/actions)
+[![Update Godot Casks](https://github.com/fractalcounty/homebrew-godot-dev/actions/workflows/update-cask.yml/badge.svg)](https://github.com/fractalcounty/homebrew-godot-dev/actions/workflows/update-cask.yml)
 [![Latest Godot Dev Version](https://img.shields.io/github/v/tag/godotengine/godot-builds?label=version&include_prereleases&sort=semver)](https://github.com/godotengine/godot-builds/releases)
 [![License](https://img.shields.io/github/license/fractalcounty/homebrew-godot-dev)](LICENSE)
 
