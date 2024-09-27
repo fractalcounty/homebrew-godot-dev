@@ -61,7 +61,7 @@ jobs:
           PR_NUMBER=${{ steps.create-pr.outputs.pull-request-number }}
 
           if [ -n "$PR_NUMBER" ]; then
-            gh pr merge "$PR_NUMBER" --merge --auto --admin
+            gh pr merge "$PR_NUMBER" --merge --auto
             echo "PR #$PR_NUMBER has been successfully merged."
           else
             echo "No Pull Request found to merge."
