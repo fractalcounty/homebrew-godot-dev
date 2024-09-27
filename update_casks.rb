@@ -87,7 +87,7 @@ def generate_cask_content(version, sha512_checksum, latest = false)
 
       app "Godot.app", target: "#{app_target}"
 
-      binary "#{appdir}/#{app_target}/Contents/MacOS/Godot", target: "godot-dev"
+      binary "\#{appdir}/#{app_target}/Contents/MacOS/Godot", target: "godot-dev"
 
       zap trash: [
         "~/Library/Application Support/Godot",
