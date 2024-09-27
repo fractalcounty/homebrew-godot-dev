@@ -51,6 +51,18 @@ def extract_versions(releases)
   .map { |r| r['tag_name'] }
 end
 
+def read_latest_release
+  if File.exist?('latest_release.txt')
+    File.read('latest_release.txt').strip
+  else
+    nil
+  end
+end
+
+def write_latest_release(version)
+  File.write('latest_release.txt', version)
+end
+
 # Compute sha256 checksum for a given asset URL
 def compute_sha256(asset_url)
   begin
@@ -154,7 +166,6 @@ def update_casks(versions)
   end
 end
 
-# Main execution
 def main
   releases = fetch_releases
   versions = extract_versions(releases)
@@ -163,8 +174,15 @@ def main
     puts "No versions found or unable to fetch versions. Exiting."
     exit 0
   end
+
+  latest_release = read_latest_release
+  if latest_release == versions.first
+    puts "No new releases since last update (#{latest_release}). Exiting."
+    exit 0
+  end
   
   update_casks(versions)
+  write_last_release(versions.first)
 end
 
 main
