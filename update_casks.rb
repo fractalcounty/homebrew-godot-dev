@@ -4,7 +4,9 @@ require 'fileutils'
 require 'net/http'
 require 'uri'
 require 'openssl'
+require 'digest'
 
+# Fetch releases from GitHub API
 def fetch_releases
   url = 'https://api.github.com/repos/godotengine/godot-builds/releases'
   uri = URI(url)
@@ -38,6 +40,7 @@ def fetch_releases
   end
 end
 
+# Extract version tags that are prereleases and match the pattern
 def extract_versions(releases)
   releases.select { |r| 
     r['prerelease'] && r['tag_name'] =~ /^\d+\.\d+-(dev|rc)\d+$/
@@ -48,27 +51,31 @@ def extract_versions(releases)
   .map { |r| r['tag_name'] }
 end
 
-def fetch_checksum(version, asset_name)
-  sha_sums_url = "https://github.com/godotengine/godot-builds/releases/download/#{version}/SHA512-SUMS.txt"
-  sha_sums_content = URI.open(sha_sums_url).read
-  sha_sums_content.each_line do |line|
-    checksum, file = line.strip.split('  ')
-    return checksum if file == asset_name
+# Compute sha256 checksum for a given asset URL
+def compute_sha256(asset_url)
+  begin
+    uri = URI(asset_url)
+    puts "Downloading asset to compute sha256: #{asset_url}"
+    # Open the URI and read in binary mode
+    asset_data = URI.open(uri, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE).read
+    sha256 = Digest::SHA256.hexdigest(asset_data)
+    puts "Computed sha256: #{sha256}"
+    sha256
+  rescue StandardError => e
+    puts "Failed to download or compute sha256 for #{asset_url}: #{e.message}"
+    nil
   end
-  nil
-rescue StandardError => e
-  puts "Failed to fetch or parse SHA512-SUMS.txt for #{version}: #{e.message}"
-  nil
 end
 
-def generate_cask_content(version, sha512_checksum, latest = false)
+# Generate the cask content with sha256 checksum
+def generate_cask_content(version, sha256_checksum, latest = false)
   cask_name = latest ? "godot-dev" : "godot-dev@#{version}" 
   app_target = "Godot Dev.app"
 
   <<~RUBY
     cask "#{cask_name}" do
       version "#{version}"
-      sha512 "#{sha512_checksum}"
+      sha256 "#{sha256_checksum}"
 
       url "https://github.com/godotengine/godot-builds/releases/download/#{version}/Godot_v#{version}_macos.universal.zip",
           verified: "github.com/godotengine/godot-builds/"
@@ -98,6 +105,7 @@ def generate_cask_content(version, sha512_checksum, latest = false)
   RUBY
 end
 
+# Write the cask file if it has changed
 def write_cask_file(name, content)
   FileUtils.mkdir_p('Casks')
   cask_path = "Casks/#{name}.rb"
@@ -118,31 +126,35 @@ def write_cask_file(name, content)
   puts "Cask #{name} has been updated."
 end
 
+# Update casks with the latest versions
 def update_casks(versions)
   # versioned casks
   versions.each do |version|
     asset_name = "Godot_v#{version}_macos.universal.zip"
-    sha512_checksum = fetch_checksum(version, asset_name)
-    if sha512_checksum
-      cask_content = generate_cask_content(version, sha512_checksum)
+    asset_url = "https://github.com/godotengine/godot-builds/releases/download/#{version}/#{asset_name}"
+    sha256_checksum = compute_sha256(asset_url)
+    if sha256_checksum
+      cask_content = generate_cask_content(version, sha256_checksum)
       write_cask_file("godot-dev@#{version}", cask_content)
     else
-      puts "Skipping cask for #{version} due to missing checksum."
+      puts "Skipping cask for #{version} due to missing sha256 checksum."
     end
   end
 
   # latest cask
   latest_version = versions.first
   asset_name = "Godot_v#{latest_version}_macos.universal.zip"
-  sha512_checksum = fetch_checksum(latest_version, asset_name)
-  if sha512_checksum
-    latest_cask_content = generate_cask_content(latest_version, sha512_checksum, true)
+  asset_url = "https://github.com/godotengine/godot-builds/releases/download/#{latest_version}/#{asset_name}"
+  sha256_checksum = compute_sha256(asset_url)
+  if sha256_checksum
+    latest_cask_content = generate_cask_content(latest_version, sha256_checksum, true)
     write_cask_file("godot-dev", latest_cask_content)
   else
-    puts "Skipping latest cask update due to missing checksum for #{latest_version}."
+    puts "Skipping latest cask update due to missing sha256 checksum for #{latest_version}."
   end
 end
 
+# Main execution
 def main
   releases = fetch_releases
   versions = extract_versions(releases)
