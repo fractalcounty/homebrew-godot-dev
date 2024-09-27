@@ -2,20 +2,34 @@ name: Update Godot Casks
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 0 * * 1' # runs every Monday at midnight UTC
   workflow_dispatch:
 
 jobs:
   update-casks:
     runs-on: macos-latest
+
     permissions:
       contents: write
       pull-requests: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: Homebrew/actions/setup-homebrew@master
 
-      - name: Update Godot Casks
+    steps:
+      - name: Create GitHub App Token
+        uses: actions/create-github-app-token@v1
+        id: generate-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # ensure full history for versioning
+
+      - name: Setup Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Run update_casks.rb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -23,21 +37,32 @@ jobs:
           brew tap fractalcounty/homebrew-godot-dev
           ruby update_casks.rb
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+      - name: Create pull request
+        id: create-pr
+        uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: Update Godot development versions
-          title: Update Godot development versions
-          body: This PR updates the Godot development versions.
-          branch: update-godot-versions
+          token: ${{ steps.generate-token.outputs.token }}
+          commit-message: 'Updated to latest godot-build releases'
+          title: 'Update latest Godot build releases'
+          body: |
+            This PR updates the latest Godot development builds from the [godot-builds](https://github.com/godotengine/godot-builds/releases) repository.
+
+            **Note:** Only one `godot-dev` cask can be installed at a time to prevent conflicts with the CLI tool.
+          branch: update-godot-dev-casks
           delete-branch: true
+          sign-commits: true # disable if auth issues show up
 
       - name: Auto-merge PR
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_APP_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          PR_URL=$(gh pr list --limit 1 --json url --jq '.[0].url')
-          if [ -n "$PR_URL" ]; then
-            gh pr merge --auto --merge "$PR_URL"
+          echo "${GITHUB_APP_TOKEN}" | gh auth login --with-token
+
+          PR_NUMBER=${{ steps.create-pr.outputs.pull-request-number }}
+
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr merge "$PR_NUMBER" --merge --auto --admin
+            echo "PR #$PR_NUMBER has been successfully merged."
+          else
+            echo "No Pull Request found to merge."
           fi
