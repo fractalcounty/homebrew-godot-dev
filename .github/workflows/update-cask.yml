@@ -49,6 +49,7 @@ jobs:
 
             **Note:** Only one `godot-dev` cask can be installed at a time to prevent conflicts with the CLI tool.
           branch: update-godot-dev-casks
+          branch-suffix: -${{ github.run_number }}
           delete-branch: true
           sign-commits: true # disable if auth issues show up
 
