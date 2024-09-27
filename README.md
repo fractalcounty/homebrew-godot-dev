@@ -5,14 +5,13 @@
   </picture>
 </div>
 
-# Godot development snapshots for Homebrew
+# Latest Godot build releases for Homebrew
+
 [![Update Godot Casks](https://github.com/fractalcounty/homebrew-godot-dev/actions/workflows/update-cask.yml/badge.svg)](https://github.com/fractalcounty/homebrew-godot-dev/actions/workflows/update-cask.yml)
 [![Latest Godot Dev Version](https://img.shields.io/github/v/tag/godotengine/godot-builds?label=version&include_prereleases&sort=semver)](https://github.com/godotengine/godot-builds/releases)
 [![License](https://img.shields.io/github/license/fractalcounty/homebrew-godot-dev)](LICENSE)
 
-This is a Homebrew tap I made so that I could install the latest development preview builds of the [Godot Engine](https://godotengine.org/) on macOS using the Homebrew package manager. It provides the five most recent dev previews (e.g., `4.4-dev2`, `4.3-rc2`), as opposed to the [official Homebrew cask](https://formulae.brew.sh/cask/godot) which only covers the most recent stable release.
-
-The cask is automatically updated using a GitHub Actions workflow to always point to the latest development build available from the [Godot Engine's official builds](https://github.com/godotengine/godot-builds/releases).
+This is a Homebrew tap I made so that I could install development builds of the [Godot Engine](https://godotengine.org/) on macOS using the Homebrew package manager. The main cask is automatically updated using a GitHub Actions workflow to always point to the most recent unstable macOS release from the official [godot-builds repo](https://github.com/godotengine/godot-builds/releases), as opposed to the [official Homebrew cask](https://formulae.brew.sh/cask/godot) which only covers major releases. It also contains casks for the five most recent development previews and/or release canidates which can be optionally specified.
 
 ## Installation
 
@@ -25,29 +24,30 @@ The cask is automatically updated using a GitHub Actions workflow to always poin
     brew tap fractalcounty/homebrew-godot-dev
     ```
 
-2. Install the Godot development build:
+2. Install the latest release from godot-builds:
 
     ```zsh
     brew install --cask godot-dev
     ```
 
+    Optionally, install a specific version:
+
+    ```zsh
+    brew install --cask godot-dev@4.3-rc1
+    ```
+
+    Note that while `godot-dev` doesn't conflict with the official stable `godot` cask, you can't install multiple `godot-dev` casks from this tap at once.
+
 ## Updating
 
-To update the Godot development build to the latest version, run:
+To update to the latest  release, run:
 
 ```zsh
 brew update
 brew upgrade --cask godot-dev
 ```
 
-## Caveats
-
-- **Development Version**: This cask installs a development version of Godot Engine, which may be unstable or contain bugs. Use at your own risk.
-- **Stable Releases**: For stable releases of Godot Engine, use the official Homebrew cask:
-
-    ```zsh
-    brew install --cask godot
-    ```
+Note that this will require updating your projects to the new latest version. To avoid this, install a specific version.
 
 ## Contributing
 
