@@ -24,19 +24,25 @@ This is a Homebrew tap I made so that I could install development builds of the 
     brew tap fractalcounty/homebrew-godot-dev
     ```
 
-2. Install the latest release from godot-builds:
+2. Install the latest unstable release from the [godot-builds repo](https://github.com/godotengine/godot-builds/releases):
 
     ```zsh
     brew install --cask godot-dev
     ```
 
-    Optionally, install a specific version:
+    To optionally specify a specific dev preview/release canidate (only 5 most recent are included):
 
     ```zsh
     brew install --cask godot-dev@4.3-rc1
     ```
 
-    Note that while `godot-dev` doesn't conflict with the official stable `godot` cask, you can't install multiple `godot-dev` casks from this tap at once.
+    Note that while `godot-dev` doesn't conflict with the official stable `godot` cask, you can't install multiple `godot-dev` casks from this tap at once as it would conflict with the CLI tool.
+
+3. Open `Godot Dev.app` or invoke it via the CLI:
+
+    ```zsh
+    godot-dev --version
+    ```
 
 ## Updating
 
