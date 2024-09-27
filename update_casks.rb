@@ -182,7 +182,7 @@ def main
   end
   
   update_casks(versions)
-  write_last_release(versions.first)
+  write_latest_release(versions.first)
 end
 
 main
