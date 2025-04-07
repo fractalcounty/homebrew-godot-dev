@@ -43,7 +43,7 @@ end
 # Extract version tags that are prereleases and match the pattern
 def extract_versions(releases)
   releases.select { |r| 
-    r['prerelease'] && r['tag_name'] =~ /^\d+\.\d+-(dev|rc)\d+$/
+    r['prerelease'] && r['tag_name'] =~ /^\d+\.\d+-(dev|rc)\d*$/
   }
   .sort_by { |r| r['published_at'] }
   .reverse
